@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.email = ['felix.eschey@makandra.de']
 
   spec.summary = 'Run tests for changed code first'
-  # spec.description = "TODO: Write a longer description or delete this line."
-  spec.homepage = 'https://code.makandra.de/makandra/testsort'
+  spec.description = 'A CLI tool for coverage based test case prioritization.' 
+  spec.homepage = 'https://github.com/OuttaSpaceTime/testsort'
   spec.license = 'MIT'
   spec.required_ruby_version = '>= 2.6.0'
 
