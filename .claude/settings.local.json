@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bundle exec:*)",
+      "Bash(ruby -e \"require 'testsort'; puts Testsort::Configuration.new.coverage_mode\")"
+    ]
+  }
+}
