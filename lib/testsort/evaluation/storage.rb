@@ -17,10 +17,15 @@ module Testsort
       end
 
       def write_evaluation_files
+        # NOTE: order MUST match Paths.evaluation_file_paths:
+        # [run_times, faults, failures, executed_specs]
+        # Previously @faults and @failures were swapped here, which made the
+        # APFD calculator score against raw failure counts (heavy with noise)
+        # instead of the deduped exception-tracker @faults series.
         Paths.evaluation_file_paths(current_test_env_number).zip([
           @spec_run_times,
-          @failures,
           @faults,
+          @failures,
           @executed_specs,
         ]).each do |file_path, data_array|
           File.open(file_path, 'a') do |f|

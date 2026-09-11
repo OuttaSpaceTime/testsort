@@ -31,8 +31,14 @@ RSpec.configure do |config|
 
   # Reset Testsort configuration to a known default after each example so
   # leaked state (e.g. line_level flipped to true by a prior spec) doesn't
-  # affect unrelated tests.
-  config.after(:each) do
-    Testsort.instance_variable_set(:@configuration, Testsort::Configuration.new)
+  # affect unrelated tests. Default the project hook to Radfahrausbildung —
+  # that matches the values previously hardcoded gem-wide, keeping existing
+  # specs green without per-spec setup.
+  reset_configuration = lambda do
+    fresh = Testsort::Configuration.new
+    fresh.project = Testsort::Projects::Radfahrausbildung.new
+    Testsort.instance_variable_set(:@configuration, fresh)
   end
+  config.before(:suite) { reset_configuration.call }
+  config.after(:each)   { reset_configuration.call }
 end

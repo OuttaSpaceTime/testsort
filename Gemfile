@@ -7,6 +7,7 @@ gemspec
 
 gem 'bigdecimal'
 gem 'byebug'
+gem 'csv'
 gem 'mutex_m'
 gem 'rake', '~> 13.0'
 gem 'rspec', '~> 3.0'

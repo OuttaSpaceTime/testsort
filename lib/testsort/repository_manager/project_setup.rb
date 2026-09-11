@@ -4,18 +4,15 @@ module Testsort
       def self.setup(parallel: false)
         puts ''
 
-        database_command_prefix = parallel ? 'parallel' : 'db'
+        project = Testsort.configuration.project
+        project.change_project_files(Paths.root)
         project_setup = new
 
-        Bundler.with_original_env do
-          [
-            'bundle install',
-            'yarn install',
-            "rake #{database_command_prefix}:drop",
-            "rake #{database_command_prefix}:create",
-            "rake #{database_command_prefix}:migrate #{parallel ? '' : 'RAILS_ENV=test'}",
-            # 'bin/setup'
-          ].each do |command|
+        # with_unbundled_env (not with_original_env) so an outer
+        # BUNDLE_GEMFILE override (used to invoke testsort against an
+        # external project) does not leak into bundle install / rake.
+        Bundler.with_unbundled_env do
+          project.setup_commands(parallel: parallel).each do |command|
             project_setup.run(command)
           end
 
@@ -32,6 +29,7 @@ module Testsort
           puts "#{commands_string} failed"
           puts ''
           puts error_str
+          raise Testsort::Error, "Setup command failed: #{commands_string}"
         end
       end
     end

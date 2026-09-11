@@ -76,7 +76,7 @@ describe 'prioritized command' do
 
       command = get_command.call
       expect(command).to include('bundle exec rspec')
-      expect(command).to include('--order default')
+      expect(command).to include('--order defined')
       expect(command).to include('spec/models/user_spec.rb')
       expect(command).to include('spec/models/post_spec.rb')
       user_pos = command.index('spec/models/user_spec.rb')

@@ -36,6 +36,11 @@ module Testsort
         gp.plot Numo::DFloat.linspace(0, 1, 11), pfd_at_step, w: 'lines'
 
         gp
+      rescue Errno::ENOENT => e
+        # gnuplot binary unavailable; the plot is auxiliary, the fault data
+        # written by write_results is what matters. Don't take the suite down.
+        warn "Testsort: skipping plot (#{e.message})"
+        nil
       end
 
       def total_specs

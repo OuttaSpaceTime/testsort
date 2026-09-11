@@ -12,6 +12,8 @@ module Testsort
         end
 
         def merge_coverage_results
+          clear_ground_truth_rows_for_new_run_specs
+
           (0..new_coverage_matrix.shape[0] - 1).each do |new_spec_index|
             (0..new_coverage_matrix.shape[1] - 1).each do |new_file_index|
               current_file_path = new_code_file_to_index[new_file_index]
@@ -22,6 +24,16 @@ module Testsort
             end
           end
           @ground_truth_coverage
+        end
+
+        def clear_ground_truth_rows_for_new_run_specs
+          (0..new_coverage_matrix.shape[0] - 1).each do |new_spec_index|
+            spec_path = new_spec_file_to_index[new_spec_index]
+            gt_spec_idx = ground_truth_spec_file_to_index[spec_path]
+            next if gt_spec_idx.nil?
+
+            ground_truth_coverage_matrix.clear_row(gt_spec_idx)
+          end
         end
 
         def new_ground_truth_entries_by_case(current_file_path, current_spec_path)

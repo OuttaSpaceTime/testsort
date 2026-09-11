@@ -10,6 +10,8 @@ module Testsort
     INDEX_TO_FILE = "#{GEM_STORAGE}/index_to_file.json".freeze
     COVERAGE_MATRIX = "#{GEM_STORAGE}/coverage_matrix.bin".freeze
     COVERAGE_MATRIX_FILE = "#{GEM_STORAGE}/coverage_matrix".freeze
+    AGENT_SESSION = "#{GEM_STORAGE}/agent_session.json".freeze
+    AGENT_RESULTS_BASENAME = "#{GEM_STORAGE}/agent_results.json".freeze
 
     class << self
       def root
@@ -95,14 +97,27 @@ module Testsort
         path
       end
 
+      def agent_results_path(env = nil)
+        base = AGENT_RESULTS_BASENAME
+        return base if env.nil? || env.to_s == '1' || env.to_s == ''
+
+        # Insert -env-N before the .json extension so glob patterns are consistent.
+        base.sub(/\.json\z/, "-env-#{env}.json")
+      end
+
+      def agent_results_glob
+        # Matches both the base file (agent_results.json) and per-env files
+        # (agent_results-env-N.json) produced by parallel workers.
+        base_no_ext = AGENT_RESULTS_BASENAME.sub(/\.json\z/, '')
+        "#{base_no_ext}*.json"
+      end
+
       def concat_test_env(path, test_env_number)
         "#{path}-env-#{test_env_number}"
       end
 
       def spec_folder_paths
-        %w[features factories controllers jobs models mailers requests views workers].map do |spec_folder|
-          File.join('spec', spec_folder)
-        end
+        Testsort.configuration.project.spec_folder_paths
       end
 
       def commits_without_failures_path

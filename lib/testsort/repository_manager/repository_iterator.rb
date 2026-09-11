@@ -6,7 +6,7 @@ module Testsort
       def initialize
         super
         @commits_without_failures = FileManager.commits_without_failures
-        @main_branch = @repo.branches.find { |b| b.name == 'fe/testsort' }
+        @main_branch = @repo.branches.find { |b| b.name == Testsort.configuration.project.branch_name }
         checkout_base_commit
       end
 
@@ -65,7 +65,7 @@ module Testsort
       end
 
       def only_ignored_changes?
-        ignored_file_types = %w[.js .sass .json .lock Gemfile .haml .yml spec/support routes.rb] | Paths.spec_folder_paths
+        ignored_file_types = Testsort.configuration.project.ignored_file_types | Paths.spec_folder_paths
 
         @repo.status do |file, status|
           if status.to_s.include?('index') && !include_any?(file, ignored_file_types)

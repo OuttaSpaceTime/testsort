@@ -103,7 +103,11 @@ module Testsort
             raise Testsort::Error::CoverageStoreIncompatible, REPREPARE_MESSAGE
           end
 
-          if meta['line_level'] != !!Testsort.configuration.line_level
+          # Allow loading a line_level=true baseline with line_level=false config
+          # (line vectors are extra data that file-level prioritization ignores).
+          # The reverse (line_level=false on disk, true config) is incompatible
+          # because line vectors aren't there to load.
+          if !!Testsort.configuration.line_level && !meta['line_level']
             raise Testsort::Error::CoverageStoreIncompatible, REPREPARE_MESSAGE
           end
 

@@ -13,6 +13,11 @@ module Testsort
         @line_vectors["#{spec_idx},#{file_idx}"] = lines unless lines.nil?
       end
 
+      def clear_row(spec_idx)
+        @coverage_matrix[spec_idx, true] = 0
+        @line_vectors.delete_if { |k, _| k.start_with?("#{spec_idx},") }
+      end
+
       def union_record(spec_idx, file_idx, hit_count:, lines: nil)
         @coverage_matrix[spec_idx, file_idx] += hit_count
         return if lines.nil?

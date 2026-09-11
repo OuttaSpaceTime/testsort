@@ -61,4 +61,16 @@ describe Testsort::Configuration do
       expect([true, false]).to include(config.eval_coverage_supported?)
     end
   end
+
+  describe '#project' do
+    it 'defaults to a Testsort::Projects::Base instance' do
+      expect(config.project).to be_a(Testsort::Projects::Base)
+    end
+
+    it 'can be reassigned' do
+      custom = Testsort::Projects::Base.new
+      config.project = custom
+      expect(config.project).to eq(custom)
+    end
+  end
 end

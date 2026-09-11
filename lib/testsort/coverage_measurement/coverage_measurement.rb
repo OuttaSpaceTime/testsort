@@ -60,7 +60,10 @@ module Testsort
 
         spec_idx = current_spec_file_index
         file_idx = @code_file_to_index[covered_file]
-        lines = Testsort.configuration.line_level ? covered_line_numbers(coverage_result) : nil
+        # Always capture line numbers so cached coverage data is reusable
+        # across passes that toggle line_level. The line_level flag governs
+        # prioritization-time behavior; capture-time should not gate it.
+        lines = covered_line_numbers(coverage_result)
         @coverage_matrix.union_record(spec_idx, file_idx, hit_count: times_hit(coverage_result), lines: lines)
       end
 

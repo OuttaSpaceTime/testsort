@@ -18,7 +18,9 @@ module Testsort
         end
 
         def prepare_files(staged_commit, reset_commit)
-          RepositoryManager::FileReset.prepare_project_files
+          if Testsort.configuration.project.legacy_file_reset?
+            RepositoryManager::FileReset.prepare_project_files
+          end
           @repo.discard_spec_changes(reset_commit)
           RepositoryManager::FileManager.use_coverage_data_from_previous_run(staged_commit)
         end

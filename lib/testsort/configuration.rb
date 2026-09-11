@@ -1,16 +1,36 @@
+# frozen_string_literal: true
+
 module Testsort
   class Configuration
-    attr_reader :coverage_mode, :line_level
+    attr_reader :coverage_mode, :line_level,
+                :line_level_filter_common, :line_level_strength_sort, :line_level_naive_order
+    attr_accessor :project
 
     def initialize
       @oneshot_lines = true
       @lines = nil
       @line_level = false
+      @line_level_filter_common = true
+      @line_level_strength_sort = true
+      @line_level_naive_order = false
+      @project = Projects::Base.new
       compute_coverage_mode
     end
 
     def line_level=(use_line_level)
       @line_level = use_line_level
+    end
+
+    def line_level_filter_common=(value)
+      @line_level_filter_common = value
+    end
+
+    def line_level_strength_sort=(value)
+      @line_level_strength_sort = value
+    end
+
+    def line_level_naive_order=(value)
+      @line_level_naive_order = value
     end
 
     def coverage_mode=(coverage_mode_hash)

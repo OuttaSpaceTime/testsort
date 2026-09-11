@@ -131,6 +131,41 @@ describe Testsort::CoverageMeasurement::CoverageMatrix do
     end
   end
 
+  describe '#clear_row' do
+    it 'zeros all columns for the given spec row' do
+      matrix = described_class.new(Numo::Int32[[5, 3], [1, 2]])
+      matrix.clear_row(0)
+      expect(matrix[0, 0]).to eq(0)
+      expect(matrix[0, 1]).to eq(0)
+      # Other rows untouched
+      expect(matrix[1, 0]).to eq(1)
+      expect(matrix[1, 1]).to eq(2)
+    end
+
+    it 'removes line vector entries for the cleared row' do
+      matrix = described_class.new(Numo::Int32[[5, 3], [1, 2]])
+      matrix.record(0, 0, hit_count: 5, lines: [1, 2])
+      matrix.record(0, 1, hit_count: 3, lines: [10])
+      matrix.record(1, 0, hit_count: 1, lines: [99])
+
+      matrix.clear_row(0)
+
+      expect(matrix.lines_for(0, 0)).to be_nil
+      expect(matrix.lines_for(0, 1)).to be_nil
+      # Row 1 line vectors must survive
+      expect(matrix.lines_for(1, 0)).to eq([99])
+    end
+
+    it 'does not remove line vectors for a different row that shares a digit prefix' do
+      # spec_idx=1 and spec_idx=10 must not collide — "1," does not prefix "10,"
+      matrix = described_class.new(Numo::Int32.zeros(11, 2))
+      matrix.record(1, 0, hit_count: 1, lines: [5])
+      matrix.record(10, 0, hit_count: 1, lines: [7])
+      matrix.clear_row(1)
+      expect(matrix.lines_for(10, 0)).to eq([7])
+    end
+  end
+
   describe '#union_record' do
     it 'sums hit counts' do
       matrix = described_class.new(Numo::Int32[[5, 0], [0, 0]])
